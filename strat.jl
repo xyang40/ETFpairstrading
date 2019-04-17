@@ -20,4 +20,5 @@ for ticker in tickers[2:end,]
     #println(curr)
     join(df, curr[:, [Symbol("Date"), Symbol("Adj Close")]], on = :Date, makeunique=true)
     #df[:ticker] = curr[:,[Symbol("Adj Close")]]
+
 end
