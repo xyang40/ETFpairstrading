@@ -12,13 +12,15 @@ etfs = Dict("EWJ"=>"Japan","EWZ"=>"Brazil","FXI"=>"China","EWY"=>"South Korea",
 
 tickers = [k for k in keys(etfs)]
 
-df = CSV.File("files\\"*tickers[1]*".csv") |> DataFrame
+df = CSV.File("C:\\Users\\Xi\\Desktop\\Projects\\ETFpairstrading\\files\\"*tickers[1]*".csv") |> DataFrame
 df = df[:, [Symbol("Date"), Symbol("Adj Close")]]
+matrix = Matrix(2013, 0)
 for ticker in tickers[2:end,]
     #println(ticker)
     curr = CSV.File("files\\"*ticker*".csv") |> DataFrame
     #println(curr)
-    join(df, curr[:, [Symbol("Date"), Symbol("Adj Close")]], on = :Date, makeunique=true)
+    #join(df, curr[:, [Symbol("Date"), Symbol("Adj Close")]], on = :Date, makeunique=true)
     #df[:ticker] = curr[:,[Symbol("Adj Close")]]
-
+    adjclose = curr[:, [Symbol("Adj Close")]]
+    matrix = [matrix adjclose]
 end
