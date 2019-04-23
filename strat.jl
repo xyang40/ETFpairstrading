@@ -2,7 +2,6 @@ using CSV
 using DataFrames
 using Statistics
 using Lasso
-
 function glasso(S, λ, maxiter=10, tol=1e-5)
     if  λ == 0
         return S, inv(S)
@@ -15,6 +14,9 @@ function glasso(S, λ, maxiter=10, tol=1e-5)
             for dim in 1:p
                 W11 = W[1:end.!=dim, 1:end.!=dim]
                 S12 = S[dim, 1:end.!=dim]
+
+                print("iter: ", iter, "-->", "dim: ", dim, "\n")
+                print("sqrtW11: ", sqrt(W11), "invSqrtW11S12: ", inv(sqrt(W11))*S12, "\n")
 
                 f = Lasso.fit(LassoPath, sqrt(W11), inv(sqrt(W11))*S12)
                 coefs = f.coefs[1:end,end]
@@ -40,6 +42,7 @@ end
 
 
 
+
 etfs = Dict("EWJ"=>"Japan","EWZ"=>"Brazil","FXI"=>"China","EWY"=>"South Korea",
 "EWT"=>"Taiwan","EWH"=>"Hong Kong","EWC"=>"Canada","EWG"=>"Germany",
 "EWU"=>"United Kingdom","EWA"=>"Australia","EWW"=>"Mexico","EWL"=>"Switzerland",
@@ -49,11 +52,11 @@ etfs = Dict("EWJ"=>"Japan","EWZ"=>"Brazil","FXI"=>"China","EWY"=>"South Korea",
 "EWD"=>"Sweden","EWN"=>"Netherlands","EPU"=>"Peru","ENZL"=>"New Zealand",
 "EIS"=>"Israel","EWO"=>"Austria","EIRL"=>"Ireland","EWK"=>"Belgium")
 
-tickers = [k for k in keys(etfs)]
+#tickers = [k for k in keys(etfs)]
 
 df = CSV.File("C:\\Users\\Xi\\Desktop\\Projects\\ETFpairstrading\\files\\ALL.csv") |> DataFrame
-data = convert(Matrix, df[:,2:end])
+data = convert(Array, df[:,2:end])
 
 S = cov(data)
 rho = 0.01
-#Theta = glasso(S, rho, 100)
+Theta = glasso(S, rho, 100)
