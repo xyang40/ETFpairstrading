@@ -1,6 +1,9 @@
 using CSV
 using DataFrames
 using Statistics
+using DelimitedFiles
+
+using GraphLasso,  Distributions, RDatasets
 
 etfs = Dict("EWJ"=>"Japan","EWZ"=>"Brazil","FXI"=>"China","EWY"=>"South Korea",
 "EWT"=>"Taiwan","EWH"=>"Hong Kong","EWC"=>"Canada","EWG"=>"Germany",
@@ -18,4 +21,6 @@ data = convert(Array, df[:,2:end])
 
 S = cov(data)
 rho = 0.01
-Theta = glasso(S, rho, 100)
+#print(typeof(S))
+#print(S)
+Theta = GraphLasso.graphlasso(S, 1.0; tol=1e-6, penalize_diag=true)
