@@ -1,7 +1,6 @@
 import pandas as pd
 from sklearn import covariance
 
-
 etfs = {"EWJ":"Japan","EWZ":"Brazil","FXI":"China","EWY":"South Korea",
 "EWT":"Taiwan","EWH":"Hong Kong","EWC":"Canada","EWG":"Germany",
 "EWU":"United Kingdom","EWA":"Australia","EWW":"Mexico","EWL":"Switzerland",
@@ -13,7 +12,12 @@ etfs = {"EWJ":"Japan","EWZ":"Brazil","FXI":"China","EWY":"South Korea",
 
 df = pd.read_csv("C:\\Users\\Xi\\Desktop\\Projects\\ETFpairstrading\\files\\ALL.csv")
 del df['Date']
-edge_model = covariance.GraphicalLassoCV(cv=5)
+edge_model = covariance.GraphicalLassoCV(cv=20)
 
-corr = df.corr()
-print(corr.shape)
+
+#df /= df.std(axis=0)
+edge_model.fit(df)
+
+p = edge_model.precision_
+
+print(p)
