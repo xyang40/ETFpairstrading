@@ -1,10 +1,9 @@
 import pandas as pd
 import sys
-import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.collections import LineCollection
 from sklearn import cluster, covariance, manifold
-
+import numpy as np
 import seaborn as sns
 import networkx as nx
 
@@ -22,20 +21,24 @@ symbols, names = np.array(sorted(etfs.items())).T
 df = pd.read_csv("C:\\Users\\Xi\\Desktop\\Projects\\ETFpairstrading\\files\\ALL.csv")
 del df['Date']
 
+
+df = np.log1p(df.pct_change()).iloc[1:]
+
+#np.log(df.price) - np.log(df.price.shift(1))
+#print(df.pct_change)  ,
+
 cols = df.columns
-edge_model = covariance.GraphicalLassoCV(alphas=[0.001, 20], cv=10)
+ctries = [etfs[c] for c in cols]
+#print(ctries)
+cols = pd.Series(ctries)
 
+edge_model = covariance.GraphicalLassoCV( cv=10)
 
-#df /= df.std(axis=0)
+df /= df.std(axis=0)
 edge_model.fit(df)
 
 p = edge_model.precision_
 c = edge_model.covariance_
-
-#corr = dataframe.corr()
-#sns.heatmap(p)
-#xticklabels=p.columns.values,
-#yticklabels=p.columns.values)
 
 #using covariance
 #_, labels = cluster.affinity_propagation(c)
@@ -49,13 +52,22 @@ p = pd.DataFrame(p, columns=cols, index=cols)
 links = p.stack().reset_index()
 links.columns = ['var1', 'var2','value']
 
-links=links.loc[ (abs(links['value']) > 0.005) &  (links['var1'] != links['var2']) ]
+links=links.loc[ (abs(links['value']) > 0.17) &  (links['var1'] != links['var2']) ]
 
 # Build your graph
 G=nx.from_pandas_edgelist(links,'var1','var2', create_using=nx.Graph())
+
+
+pos = nx.spring_layout(G, k=0.2*1/np.sqrt(len(G.nodes())), iterations=20)
+plt.figure(3, figsize=(30, 30))
+nx.draw(G, pos=pos)
+nx.draw_networkx_labels(G, pos=pos)
+plt.show()
+
+
  
 # Plot the network:
-nx.draw(G, with_labels=True, node_color='red', node_size=800, edge_color='black', linewidths=1, font_size=15)
+#nx.draw(G, with_labels=True, node_color='red', node_size=800, edge_color='black', linewidths=1, font_size=15)
 
 
 
