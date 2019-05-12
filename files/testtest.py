@@ -24,7 +24,7 @@ links_filtered=links.loc[ (links['value'] > 0.8) & (links['var1'] != links['var2
 links_filtered
  
 # Build your graph
-G=nx.from_pandas_edgelist(links_filtered, 'var1', 'var2')
+G=nx.from_pandas_(links_filtered, 'var1', 'var2', create_using=nx.Graph())
  
 # Plot the network:
 nx.draw(G, with_labels=True, node_color='orange', node_size=400, edge_color='black', linewidths=1, font_size=15)

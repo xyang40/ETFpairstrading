@@ -23,10 +23,10 @@ df = pd.read_csv("C:\\Users\\Xi\\Desktop\\Projects\\ETFpairstrading\\files\\ALL.
 del df['Date']
 
 cols = df.columns
-edge_model = covariance.GraphicalLassoCV(cv=10)
+edge_model = covariance.GraphicalLassoCV(alphas=[0.001, 20], cv=10)
 
 
-df /= df.std(axis=0)
+#df /= df.std(axis=0)
 edge_model.fit(df)
 
 p = edge_model.precision_
@@ -49,15 +49,13 @@ p = pd.DataFrame(p, columns=cols, index=cols)
 links = p.stack().reset_index()
 links.columns = ['var1', 'var2','value']
 
-links=links.loc[ (links['value'] > 0.001) &  (links['var1'] != links['var2']) ]
+links=links.loc[ (abs(links['value']) > 0.005) &  (links['var1'] != links['var2']) ]
 
 # Build your graph
-G=nx.from_pandas_edgelist(links,'var1','var2')
+G=nx.from_pandas_edgelist(links,'var1','var2', create_using=nx.Graph())
  
 # Plot the network:
-nx.draw(G, with_labels=True, node_color='orange', node_size=400, edge_color='black', linewidths=1, font_size=15)
-
-
+nx.draw(G, with_labels=True, node_color='red', node_size=800, edge_color='black', linewidths=1, font_size=15)
 
 
 
